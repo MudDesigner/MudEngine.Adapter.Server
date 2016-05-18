@@ -10,6 +10,7 @@ namespace MudDesigner.MudEngine.Networking
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using MudDesigner.MudEngine.Actors;
 
@@ -86,8 +87,7 @@ namespace MudDesigner.MudEngine.Networking
         /// <summary>
         /// Gets or sets the name of this adapter.
         /// </summary>
-        public override string Name =>
-                    string.Format("Mud Engine {0} Server Adapter", (int)System.Environment.OSVersion.Platform == 4 ? "Unix" : "Windows");
+        public override string Name => $"Mud Engine {RuntimeInformation.OSDescription} Server Adapter";
 
         /// <summary>
         /// Gets or sets the owner of the server.
@@ -154,7 +154,7 @@ namespace MudDesigner.MudEngine.Networking
         /// <returns>
         /// Returns an awaitable Task
         /// </returns>
-        public override Task Start(IGame game)
+        public override async Task Start(IGame game)
         {
             if (this.Status != ServerStatus.Stopped)
             {
@@ -178,7 +178,7 @@ namespace MudDesigner.MudEngine.Networking
 
             if (this.RaiseOnStartup())
             {
-                return Task.FromResult(0);
+                return;
             }
 
             // Start a timer that periodically checks for clients that are no longer connected so we can clean them up.
@@ -186,10 +186,9 @@ namespace MudDesigner.MudEngine.Networking
             this.clientTimeoutTimer.Start(staleConnectionPurgeInterval, staleConnectionPurgeInterval, 0, this.ReviewClientConnectionStates);
 
             // Begin listening for connection.
-            this.serverSocket.BeginAccept(new AsyncCallback(this.ConnectClient), this.serverSocket);
-
             this.Status = ServerStatus.Running;
-            return Task.FromResult(0);
+            Socket clientSocket = await this.serverSocket.AcceptAsync();
+            await this.ConnectClient(clientSocket);
         }
 
         /// <summary>
@@ -300,39 +299,35 @@ namespace MudDesigner.MudEngine.Networking
         /// Handles the connection of a client to the server.
         /// </summary>
         /// <param name="socketState">State of the socket.</param>
-        private void ConnectClient(IAsyncResult socketState)
+        private async Task ConnectClient(Socket clientConnection)
         {
-            Socket server = (Socket)socketState.AsyncState;
-            Socket clientConnection = server.EndAccept(socketState);
-
             // Fetch the next incoming connection.
-            server.BeginAccept(new AsyncCallback(this.ConnectClient), server);
-            this.CreatePlayerConnection(clientConnection);
+            await this.CreatePlayerConnection(clientConnection);
+            Socket newConnection = await this.serverSocket.AcceptAsync();
+            await this.ConnectClient(newConnection);
         }
 
         /// <summary>
         /// Creates the player socket connection wrapper.
         /// </summary>
         /// <param name="clientConnection">The client connection.</param>
-        private void CreatePlayerConnection(Socket clientConnection)
+        private async Task CreatePlayerConnection(Socket clientConnection)
         {
             // Initialize a new player.
             IPlayer player = this.playerFactory.CreatePlayer(new LoginCommand());
             player.Deleting += this.PlayerDeleting;
 
-            player.Initialize().ContinueWith(task =>
-            {
-                this.PublishMessage(new PlayerCreatedMessage(player));
+            await player.Initialize();
+            this.PublishMessage(new PlayerCreatedMessage(player));
 
-                // Add the player and it's connection to our collection of sockets
-                this.playerSockets.Add(player, clientConnection);
+            // Add the player and it's connection to our collection of sockets
+            this.playerSockets.Add(player, clientConnection);
 
-                // Create the user connection instance and store it for the player.
-                IConnection userConnection = this.connectionFactory.CreateConnection(player, this, new ServerCommandProcessor(this));
-                this.playerConnections.Add(player, userConnection);
+            // Create the user connection instance and store it for the player.
+            IConnection userConnection = this.connectionFactory.CreateConnection(player, this, new ServerCommandProcessor(this));
+            this.playerConnections.Add(player, userConnection);
 
-                userConnection.Initialize();
-            });
+            await userConnection.Initialize();
         }
 
         /// <summary>

@@ -1,0 +1,40 @@
+{
+  "packOptions": {
+    "summary": "The default implementation of the core engine APIs",
+    "tags": [ "Game-Engine", "game engine", "gameengine", "mud", "multi-user-dungeon", "mmo", "mmorpg", "game" ],
+    "owners": [ "scionwest" ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/muddesigner/mudengine"
+    }
+  },
+  
+  "version": "1.0.0-preview1",
+  "authors": [ "scionwest" ],
+  "title": "Mud Engine Game",
+  
+  "dependencies":{
+    "MudEngine.Core": {
+      "version": "1.0.0-preview1",
+      "target": "project"
+    },
+    "MudEngine.Game":{
+        "version": "1.0.0-preview1",
+        "target": "project"
+    },
+    "MudEngine.Networking": {
+        "version": "1.0.0-preview1",
+        "target": "project"
+    },
+    "System.Runtime.InteropServices": "4.1.0-rc2-24027"
+  },
+  
+  "frameworks": {
+    "netstandard1.3": {
+      "dependencies": {
+        "NETStandard.Library": "1.5.0-rc2-24027",
+        "System.Net.Sockets": "4.1.0-rc2-24027",
+      }
+    }
+  }
+}

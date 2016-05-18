@@ -111,8 +111,13 @@ namespace MudDesigner.MudEngine.Networking
         public Task Initialize()
         {
             this.buffer = new byte[this.bufferSize];
-            this.socket.BeginReceive(this.buffer, 0, this.bufferSize, 0, new AsyncCallback(this.ReceiveData), null);
-
+            var asyncOperation = new SocketAsyncEventArgs();
+            asyncOperation.Completed += (args, e) => 
+            {
+                // this.ReceiveData(e.)
+            };
+            
+            this.socket.ReceiveAsync(asyncOperation);
             return Task.FromResult(0);
         }
 
@@ -146,6 +151,7 @@ namespace MudDesigner.MudEngine.Networking
             }
 
             byte[] buffer = Encoding.ASCII.GetBytes(content);
+
             this.socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(this.CompleteMessageSending), content);
         }
 
