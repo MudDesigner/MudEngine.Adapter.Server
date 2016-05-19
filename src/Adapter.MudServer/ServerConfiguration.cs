@@ -22,7 +22,7 @@ namespace MudDesigner.MudEngine.Networking
         /// Initializes a new instance of the <see cref="ServerConfiguration"/> class.
         /// The server is registered with a minimum password size of 6 characters, maximum password size of 16 characters and a default socket buffer size of 8192b
         /// </summary>
-        public ServerConfiguration() : this(16, 6, 8192)
+        public ServerConfiguration() : this(16, 6, 256)
         {
         }
 

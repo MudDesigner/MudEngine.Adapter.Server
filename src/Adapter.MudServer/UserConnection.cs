@@ -15,6 +15,22 @@ namespace MudDesigner.MudEngine.Networking
     using MudDesigner.MudEngine.Actors;
     using MudDesigner.MudEngine.MessageBrokering;
 
+    public static class SocketExtensions
+    {    
+        public static Task<SocketAsyncEventArgs> PerformAsyncOperation(this Socket socket, Action<SocketAsyncEventArgs> operation, byte[] buffer)
+        {
+            // Configure the async callback event.
+            var completionSource = new TaskCompletionSource<SocketAsyncEventArgs>();
+            var asyncArgs = new SocketAsyncEventArgs();
+            asyncArgs.Completed += (sender, args) => completionSource.SetResult(args);
+            asyncArgs.SetBuffer(buffer, 0, buffer.Length);
+            // Invoke what ever socket operation is being used with the args.
+            operation(asyncArgs);
+            
+            return completionSource.Task;
+        }
+    }
+
     /// <summary>
     /// Represents a connection to the server
     /// </summary>
@@ -110,15 +126,8 @@ namespace MudDesigner.MudEngine.Networking
         /// </returns>
         public Task Initialize()
         {
-            this.buffer = new byte[this.bufferSize];
-            var asyncOperation = new SocketAsyncEventArgs();
-            asyncOperation.Completed += (args, e) => 
-            {
-                // this.ReceiveData(e.)
-            };
-            
-            this.socket.ReceiveAsync(asyncOperation);
-            return Task.FromResult(0);
+            this.buffer = new byte[this.bufferSize];            
+            return this.socket.PerformAsyncOperation(arg => this.socket.ReceiveAsync(arg), this.buffer);
         }
 
         /// <summary>
@@ -138,64 +147,50 @@ namespace MudDesigner.MudEngine.Networking
         /// Sends a message to the client
         /// </summary>
         /// <param name="message">The message content</param>
-        public void SendMessage(string content)
+        public Task SendMessage(string content)
         {
             if (!this.IsConnectionValid())
             {
                 this.player.Delete();
-                return;
+                return Task.FromResult(0);
             }
             else if (content == null)
             {
-                return;
+                return Task.FromResult(0);
             }
 
             byte[] buffer = Encoding.ASCII.GetBytes(content);
-
-            this.socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(this.CompleteMessageSending), content);
+            return this.socket.PerformAsyncOperation(args => this.socket.SendAsync(args), this.buffer);
         }
 
         /// <summary>
         /// Called when the socket has received data from the client.
         /// </summary>
         /// <param name="result">The result.</param>
-        private void ReceiveData(IAsyncResult result)
+        private async Task ReceiveData()
         {
             if (!this.IsConnectionValid())
             {
-                this.player.Delete();
+                await this.player.Delete();
                 return;
             }
 
-            int bytesRead = this.socket.EndReceive(result);
-            this.socket.BeginReceive(this.buffer, 0, this.bufferSize, 0, new AsyncCallback(this.ReceiveData), null);
+            var asyncArg = await this.socket.PerformAsyncOperation(arg => this.socket.ReceiveAsync(arg), this.buffer);
+            int bytesRead = asyncArg.BytesTransferred;
             if (bytesRead == 0 || this.buffer.Count() == 0)
             {
                 return;
             }
 
             // TODO: Decode the bits into a string for parsing.
-            string commandData = Encoding.Default.GetString(this.buffer, 0, bytesRead);
+            string commandData = Encoding.UTF8.GetString(this.buffer, 0, bytesRead);
             if (commandData != "\n" || commandData != "\r\0" || commandData != "\r\n" || commandData != "\r")
             {
                 return;
             }
 
             MessageBrokerFactory.Instance.Publish(new CommandRequestedMessage(commandData, this.player, this.commandProcessor));
-        }
-
-        /// <summary>
-        /// Called when the socket has completed sending a message to the client.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        private void CompleteMessageSending(IAsyncResult result)
-        {
-            if (!this.IsConnectionValid())
-            {
-                return;
-            }
-
-            this.socket.EndSend(result);
+            await this.ReceiveData();
         }
 
         /// <summary>

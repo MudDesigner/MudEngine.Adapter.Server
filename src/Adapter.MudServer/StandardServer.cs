@@ -238,19 +238,8 @@ namespace MudDesigner.MudEngine.Networking
             return connection;
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
         public override string ToString() => $"{this.game.Name} - Adapter: {this.Name}";
 
-        /// <summary>
-        /// Gets the socket for the given player.
-        /// </summary>
-        /// <param name="player">The player to lookup a socket for.</param>
-        /// <returns>Returns the connected socket for the player</returns>
         internal Socket GetSocketForPlayer(IPlayer player)
         {
             if (!this.playerSockets.ContainsKey(player))
@@ -261,10 +250,6 @@ namespace MudDesigner.MudEngine.Networking
             return this.playerSockets[player];
         }
 
-        /// <summary>
-        /// Disconnects the specified player.
-        /// </summary>
-        /// <param name="player">The player.</param>
         private void Disconnect(IPlayer player)
         {
             if (player == null)
