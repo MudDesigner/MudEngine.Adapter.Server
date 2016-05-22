@@ -10,13 +10,30 @@
     "repository": {
       "type": "git",
       "url": "https://github.com/muddesigner/mudengine"
-    },
-    "buildOptions": {
-      "emitEntryPoint": true
     }
+  },
+    
+  "buildOptions": {
+    "emitEntryPoint": true
   },
   
   "dependencies":{
+    "MudEngine.Core": {
+      "version": "1.0.0-preview1",
+      "target": "project"
+    },
+    "MudEngine.Game":{
+        "version": "1.0.0-preview1",
+        "target": "project"
+    },
+    "MudEngine.Networking": {
+        "version": "1.0.0-preview1",
+        "target": "project"
+    },
+    "Adapter.MudServer": {
+      "version": "1.0.0-preview1",
+      "target": "project"
+    },
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.0-rc2-3002702"
