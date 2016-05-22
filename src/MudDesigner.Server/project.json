@@ -19,20 +19,16 @@
   
   "dependencies":{
     "MudEngine.Core": {
-      "version": "1.0.0-preview1",
-      "target": "project"
+      "version": "1.0.0-preview1"
     },
     "MudEngine.Game":{
-        "version": "1.0.0-preview1",
-        "target": "project"
+        "version": "1.0.0-preview1"
     },
     "MudEngine.Networking": {
-        "version": "1.0.0-preview1",
-        "target": "project"
+        "version": "1.0.0-preview1"
     },
     "Adapter.MudServer": {
-      "version": "1.0.0-preview1",
-      "target": "project"
+      "version": "1.0.0-preview1"
     },
     "Microsoft.NETCore.App": {
       "type": "platform",
