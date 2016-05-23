@@ -10,20 +10,12 @@
   },
   
   "name": "MudDesigner.MudEngine.Adapter.MudServer",
-  "version": "1.0.0-preview1",
+  "version": "1.0.0-*",
   "authors": [ "scionwest" ],
-  "title": "mud engine server adapter",
+  "title": "Mud Designer Engine Server",
   
   "dependencies":{
-    "MudEngine.Core": {
-      "version": "1.0.0-preview1"
-    },
-    "MudEngine.Game":{
-        "version": "1.0.0-preview1"
-    },
-    "MudEngine.Networking": {
-        "version": "1.0.0-preview1"
-    },
+    "MudDesigner.MudEngine.Core": "1.0.0-Dev-*",
     "System.Runtime.InteropServices": "4.1.0-rc2-24027"
   },
   

@@ -40,6 +40,19 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
+      "MudDesigner.MudEngine.Core/1.0.0-Dev-31": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.5.0-rc2-24027",
+          "System.Linq.Expressions": "4.0.11-rc2-24027"
+        },
+        "compile": {
+          "lib/netstandard1.1/MudDesigner.MudEngine.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.1/MudDesigner.MudEngine.Core.dll": {}
+        }
+      },
       "NETStandard.Library/1.5.0-rc2-24027": {
         "type": "package",
         "dependencies": {
@@ -782,31 +795,6 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
-      },
-      "MudEngine.Core/1.0.0-preview1": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v1.1",
-        "dependencies": {
-          "NETStandard.Library": "1.5.0-rc2-24027",
-          "System.Linq.Expressions": "4.0.11-rc2-24027"
-        }
-      },
-      "MudEngine.Game/1.0.0-preview1": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v1.1",
-        "dependencies": {
-          "MudEngine.Core": "1.0.0-preview1",
-          "NETStandard.Library": "1.5.0-rc2-24027",
-          "System.Linq.Expressions": "4.0.11-rc2-24027"
-        }
-      },
-      "MudEngine.Networking/1.0.0-preview1": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v1.1",
-        "dependencies": {
-          "MudEngine.Core": "1.0.0-preview1",
-          "NETStandard.Library": "1.5.0-rc2-24027"
-        }
       }
     }
   },
@@ -908,6 +896,15 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
+      ]
+    },
+    "MudDesigner.MudEngine.Core/1.0.0-Dev-31": {
+      "sha512": "T5/hBMxSOl1Pnny/UXXCH4ZN+9vVYgDYD2aGZmg1ONvaTm3GbkPztjMpMoCf/zbaiJM4ctNCO0+ky1WvSWTbag==",
+      "type": "package",
+      "files": [
+        "MudDesigner.MudEngine.Core.1.0.0-Dev-31.nupkg.sha512",
+        "MudDesigner.MudEngine.Core.nuspec",
+        "lib/netstandard1.1/MudDesigner.MudEngine.Core.dll"
       ]
     },
     "NETStandard.Library/1.5.0-rc2-24027": {
@@ -3552,25 +3549,11 @@
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
       ]
-    },
-    "MudEngine.Core/1.0.0-preview1": {
-      "type": "project",
-      "path": "../../../MudEngine/src/MudEngine.Core/project.json"
-    },
-    "MudEngine.Game/1.0.0-preview1": {
-      "type": "project",
-      "path": "../../../MudEngine/src/MudEngine.Game/project.json"
-    },
-    "MudEngine.Networking/1.0.0-preview1": {
-      "type": "project",
-      "path": "../../../MudEngine/src/MudEngine.Networking/project.json"
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "MudEngine.Core >= 1.0.0-preview1",
-      "MudEngine.Game >= 1.0.0-preview1",
-      "MudEngine.Networking >= 1.0.0-preview1",
+      "MudDesigner.MudEngine.Core >= 1.0.0-Dev-*",
       "System.Runtime.InteropServices >= 4.1.0-rc2-24027"
     ],
     ".NETStandard,Version=v1.3": [
